@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [[ ! -e /usr/local/apache2/conf/server.key ]]; then
+  echo "WARNING: Missing certificate. Creating a self-signed certificate with dummy data in it. If this is a production service, you should NOT be using this certificate!"
+  openssl req \
+    -days 365 \
+    -keyout /usr/local/apache2/conf/server.key \
+    -new \
+    -newkey rsa:4096 \
+    -nodes \
+    -out /usr/local/apache2/conf/server.crt \
+    -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.example.com" \
+    -x509
+fi
+
+# Using "exec" because CTRL-c doesn't work unless I do.
+exec httpd-foreground
